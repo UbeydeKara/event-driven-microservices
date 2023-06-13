@@ -1,0 +1,40 @@
+server:
+  port: 8081
+
+spring:
+  application:
+    name: stock-service
+
+  datasource:
+    url: jdbc:postgresql://postgres:5432/stock-service
+    username: root
+    password: 12345
+
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        format_sql: true
+        show-sql: true
+
+  kafka:
+    bootstrap-servers: http://kafka:9092
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://discovery-service:8761/eureka
+    fetch-registry: true
+    register-with-eureka: true
+    enabled: true
+
+management:
+  tracing:
+    sampling:
+      probability: 1.0
+
+  zipkin:
+    tracing:
+      endpoint: http://zipkin:9411/api/v2/spans
