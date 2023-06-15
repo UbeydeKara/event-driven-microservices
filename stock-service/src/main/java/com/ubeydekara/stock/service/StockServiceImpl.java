@@ -1,6 +1,6 @@
 package com.ubeydekara.stock.service;
 
-import com.ubeydekara.basedomain.payload.StockPayload;
+import com.ubeydekara.base.payload.StockPayload;
 import com.ubeydekara.stock.mapper.StockMapper;
 import com.ubeydekara.stock.model.Stock;
 import com.ubeydekara.stock.repository.StockRepository;
@@ -38,19 +38,20 @@ public class StockServiceImpl implements StockService {
                 .build();
     }
 
-    @KafkaListener(topics = "order-stock", groupId = "foo")
+    @KafkaListener(topics = "stock", groupId = "order")
     public StockResponse reduceQty(StockPayload stockPayload) {
         StockResponse stockResponse;
         Stock stock = stockRepository.findByProduct(stockPayload.getProduct());
 
-        if (stock == null)
-            stockResponse = StockResponse
-                    .builder()
-                    .httpStatus(HttpStatus.NOT_FOUND)
-                    .message("Product not found")
+        // add mock quantity if stock not exists
+        if (stock == null) {
+            stock = Stock.builder()
+                    .product(stockPayload.getProduct())
+                    .quantity(1000)
                     .build();
+        }
 
-        else if (stock.getQuantity() == 0)
+        if (stock.getQuantity() < stockPayload.getQuantity())
             stockResponse = StockResponse
                     .builder()
                     .httpStatus(HttpStatus.BAD_REQUEST)
@@ -58,13 +59,12 @@ public class StockServiceImpl implements StockService {
                     .build();
 
         else {
-            Integer quantity = stock.getQuantity();
-            stock.setQuantity(quantity - stockPayload.getQuantity());
-            stockRepository.save(stock);
+            stock.setQuantity(stock.getQuantity() - stockPayload.getQuantity());
+            stock = stockRepository.saveAndFlush(stock);
             stockResponse = StockResponse
                     .builder()
                     .httpStatus(HttpStatus.OK)
-                    .message("Stock is reduced. The remaining quantity: " + (stock.getQuantity() - 1))
+                    .message("Stock is reduced. The remaining quantity: " + stock.getQuantity())
                     .build();
         }
 

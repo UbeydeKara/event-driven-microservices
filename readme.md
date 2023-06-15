@@ -27,3 +27,9 @@ Then run all the containers with `docker-compose`:
 ```shell
 $ docker-compose up
 ```
+
+### TODO
+- Config Server
+- Kafka Streams
+- Kubernetes
+- JUnit Testing with Mockito

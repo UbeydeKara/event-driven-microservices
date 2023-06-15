@@ -1,6 +1,6 @@
 package com.ubeydekara.stock.service;
 
-import com.ubeydekara.basedomain.payload.StockPayload;
+import com.ubeydekara.base.payload.StockPayload;
 import com.ubeydekara.stock.model.Stock;
 import com.ubeydekara.stock.response.StockResponse;
 

@@ -10,13 +10,13 @@ public class KafkaTopicConfig {
 
     @Bean
     public NewTopic orderEmailTopic() {
-        return TopicBuilder.name("order-email")
+        return TopicBuilder.name("email")
                 .build();
     }
 
     @Bean
     public NewTopic orderStockTopic() {
-        return TopicBuilder.name("order-stock")
+        return TopicBuilder.name("stock")
                 .build();
     }
 }

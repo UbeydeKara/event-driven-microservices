@@ -31,9 +31,6 @@ spring:
     password: <your-password>
     port: 587
 
-  profiles:
-    active: default
-
   kafka:
     bootstrap-servers: http://localhost:9092
 

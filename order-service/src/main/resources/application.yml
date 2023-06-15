@@ -19,9 +19,6 @@ spring:
         format_sql: true
         show-sql: true
 
-  profiles:
-    active: default
-
   kafka:
     bootstrap-servers: http://localhost:9092
 
