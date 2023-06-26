@@ -1,0 +1,36 @@
+server:
+  port: 8888
+
+spring:
+  application:
+    name: config-service
+
+  profiles:
+    active: native, vault
+
+  # Vault Configuration
+  cloud:
+    config:
+      server:
+        vault:
+          host: ${VAULT_ADDR:127.0.0.1}
+          port: 8200
+          authentication: token
+          token: ${VAULT_TOKEN}
+          kv-version: 2
+          backend: kv
+          default-key: serviceApp # your secret key
+          order: 1
+        native:
+          searchLocations: classpath:/config
+          order: 2
+
+# Actuator Configuration
+management:
+  info:
+    env:
+      enabled: true
+  endpoints:
+    web:
+      exposure:
+        include: "*"

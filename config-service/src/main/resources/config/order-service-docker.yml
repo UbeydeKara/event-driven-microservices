@@ -1,14 +1,14 @@
 server:
-  port: 8081
+  port: 8080
 
 spring:
   application:
-    name: stock-service
+    name: order-service
 
   datasource:
-    url: jdbc:postgresql://postgres:5432/stock-service
-    username: root
-    password: 12345
+    url: jdbc:postgresql://postgres:5432/order-service
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
 
   jpa:
     hibernate:
@@ -20,7 +20,7 @@ spring:
         show-sql: true
 
   kafka:
-    bootstrap-servers: http://kafka:9092
+    bootstrap-servers: http://kafka:29092
 
 eureka:
   client:

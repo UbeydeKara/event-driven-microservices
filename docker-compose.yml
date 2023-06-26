@@ -59,12 +59,43 @@ services:
       KAFKA_BROKER_ID: 1
       KAFKA_ZOOKEEPER_CONNECT: 'zookeeper:2181'
       KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_INTERNAL:PLAINTEXT
-      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092,PLAINTEXT_INTERNAL://broker:29092
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://localhost:9092,PLAINTEXT_INTERNAL://kafka:29092
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
       KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
       KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
     networks:
       - spring
+
+  vault:
+    image: vault:latest
+    container_name: vault
+    ports:
+      - 8200:8200
+    volumes:
+      - ./vault/config:/vault/config
+      - ./vault/file:/vault/file
+      - ./vault/logs:/vault/logs
+    cap_add:
+      - IPC_LOCK
+    environment:
+      - VAULT_ADDR=http://vault:8200
+    entrypoint: vault server -config=/vault/config/vault.json
+    networks:
+      - spring
+    restart: unless-stopped
+
+  config-service:
+    image: ubeydekara/config-service:latest
+    container_name: config-service
+    ports:
+      - "8888:8888"
+    networks:
+      - spring
+    depends_on:
+      - zipkin
+    environment:
+      - VAULT_ADDR=vault
+      - VAULT_TOKEN=${VAULT_TOKEN}
 
   discovery-service:
     image: ubeydekara/discovery-service:latest
@@ -76,6 +107,7 @@ services:
     networks:
       - spring
     depends_on:
+      - config-service
       - zipkin
 
   gateway-service:
@@ -88,6 +120,7 @@ services:
     networks:
       - spring
     depends_on:
+      - config-service
       - zipkin
       - discovery-service
 
@@ -102,6 +135,7 @@ services:
       - spring
       - postgres
     depends_on:
+      - config-service
       - zipkin
       - postgres
       - kafka
@@ -117,6 +151,7 @@ services:
       - spring
       - postgres
     depends_on:
+      - config-service
       - zipkin
       - postgres
       - kafka
@@ -132,6 +167,7 @@ services:
       - spring
       - postgres
     depends_on:
+      - config-service
       - zipkin
       - postgres
       - kafka

@@ -1,14 +1,14 @@
 server:
-  port: 8082
+  port: 8081
 
 spring:
   application:
-    name: email-service
+    name: stock-service
 
   datasource:
-    url: jdbc:postgresql://postgres:5432/email-service
-    username: root
-    password: 12345
+    url: jdbc:postgresql://postgres:5432/stock-service
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
 
   jpa:
     hibernate:
@@ -19,20 +19,8 @@ spring:
         format_sql: true
         show-sql: true
 
-  mail:
-    properties:
-      mail:
-        smtp:
-          starttls:
-            enable: true
-          auth: true
-    host: smtp.gmail.com
-    username: <your-username>
-    password: <your-password>
-    port: 587
-
   kafka:
-    bootstrap-servers: http://kafka:9092
+    bootstrap-servers: http://kafka:29092
 
 eureka:
   client:
